@@ -16,9 +16,11 @@ datasource db {
 
 model User {
   id        String   @id @default(cuid())
+  clerkId   String?  @unique  // Clerk user ID for authentication
   email     String   @unique
   name      String?
   phone     String?
+  imageUrl  String?  // User avatar from Clerk
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

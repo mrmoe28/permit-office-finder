@@ -1,0 +1,137 @@
+# Cursor Rules for Permit Office Finder
+
+## CRITICAL: Development Server Management
+
+### Single Server Rule (MANDATORY)
+- **NEVER run multiple instances of the same development server**
+- **ONLY ONE `npm run dev` command per project directory at a time**
+- **Before starting any dev server, ALWAYS check for existing processes first**
+- **Kill existing processes before starting new ones**
+
+### Server Management Commands
+```bash
+# Check for existing processes before starting
+ps aux | grep -E "(npm run dev|nodemon|next dev)" | grep -v grep
+
+# Kill existing processes if found
+pkill -f "next dev"
+pkill -f "nodemon"
+
+# Only then start servers (one at a time)
+cd frontend && npm run dev     # Frontend ONLY
+# OR
+cd backend && npm run dev      # Backend ONLY
+```
+
+### Port Management
+- Frontend: ONLY use port 3000
+- Backend: ONLY use port 3001
+- NEVER start multiple servers on same port
+- Check port availability: `lsof -i :3000` and `lsof -i :3001`
+
+## TypeScript & Compilation Rules
+
+### Before Starting Development
+1. **ALWAYS run `npm run prisma:generate` in backend after schema changes**
+2. **Fix ALL TypeScript errors before starting servers**
+3. **Use `npm run lint` to check for issues first**
+
+### Error Resolution Priority
+1. Fix TypeScript compilation errors FIRST
+2. Fix Prisma client issues SECOND
+3. Start servers LAST
+
+## Claude Code Integration Rules
+
+### For AI Assistance to Work Properly
+- **Maintain stable development environment**
+- **No constant server crashes/restarts**
+- **Fix compilation errors immediately**
+- **Kill conflicting processes before asking for help**
+
+### When Claude Code Stops Working
+1. Kill all development processes
+2. Restart Cursor completely
+3. Fix any compilation errors
+4. Start only ONE server at a time
+
+## File Management Rules
+
+### Never Modify These Files Without Permission
+- `.env` files (contain secrets)
+- `package.json` dependencies
+- Database schema without migration plan
+- Production configuration files
+
+### Always Read First, Then Edit
+- Use Read tool before any Edit operations
+- Understand existing patterns before making changes
+- Follow established code conventions
+
+## Development Workflow Rules
+
+### Starting Development Session
+1. Check for existing processes: `ps aux | grep dev`
+2. Kill any conflicting processes
+3. Choose either frontend OR backend to work on
+4. Start only that one server
+5. Fix any compilation errors immediately
+
+### Ending Development Session
+1. Stop all development servers (Ctrl+C)
+2. Verify no background processes remain
+3. Clean up any temporary files
+
+### Multi-Server Development
+- Start frontend and backend in SEPARATE terminal sessions
+- Monitor both for stability
+- If either crashes, fix immediately before continuing
+- NEVER start multiple instances of same server
+
+## Emergency Cleanup Commands
+
+### If Development Environment Becomes Unstable
+```bash
+# Kill all project-related processes
+pkill -f "Permit Office Finder"
+pkill -f "next dev"
+pkill -f "nodemon"
+
+# Clean caches
+cd frontend && rm -rf .next
+cd backend && rm -rf dist
+
+# Regenerate Prisma client
+cd backend && npm run prisma:generate
+
+# Restart Cursor completely
+# Then start only ONE server at a time
+```
+
+### Process Monitoring Commands
+```bash
+# Check what's running
+ps aux | grep -E "(node|npm|nodemon)" | grep -v grep
+
+# Check port usage
+lsof -i :3000
+lsof -i :3001
+
+# Kill specific processes
+kill -9 [PID]
+```
+
+## Cursor-Specific Rules
+
+### Terminal Management in Cursor
+- Use separate terminal tabs for frontend and backend
+- Label terminals clearly ("Frontend Dev", "Backend Dev")
+- NEVER run same command in multiple terminals
+- Close unused terminals to avoid confusion
+
+### File Explorer Refresh
+- Refresh file explorer after creating/deleting files
+- Use Cmd+P to open files that don't appear in explorer
+- Restart Cursor if file system sync issues persist
+
+These rules MUST be followed to maintain a stable development environment and ensure Claude Code integration works properly.

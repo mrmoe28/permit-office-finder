@@ -1,5 +1,6 @@
 import express from 'express';
 import { PrismaClient, Prisma } from '../generated/prisma';
+import { authenticate } from '../middleware/auth';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -203,8 +204,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST /api/permit-offices - Create new permit office (admin only - placeholder)
-router.post('/', async (req, res) => {
+// POST /api/permit-offices - Create new permit office (authenticated - admin only)
+router.post('/', authenticate, async (req, res) => {
   try {
     const officeData = req.body;
 

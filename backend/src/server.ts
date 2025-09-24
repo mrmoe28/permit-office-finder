@@ -9,6 +9,10 @@ import { PrismaClient } from './generated/prisma';
 // Import routes
 import permitOfficesRoutes from './routes/permitOffices';
 import authRoutes from './routes/auth';
+import webhookRoutes from './routes/webhooks';
+import applicationRoutes from './routes/applications';
+import reviewRoutes from './routes/reviews';
+import userRoutes from './routes/users';
 
 // Load environment variables
 dotenv.config();
@@ -36,6 +40,10 @@ app.get('/health', (_req, res) => {
 // API routes
 app.use('/api/permit-offices', permitOfficesRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/webhooks', webhookRoutes);
+app.use('/api/applications', applicationRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/users', userRoutes);
 
 // API info endpoint
 app.get('/api', (_req, res) => {
