@@ -50,7 +50,7 @@ export function OfficeMap({
             </div>
           `)
         )
-        .addTo(map.current)
+        .addTo(map.current!)
       
       markers.current.push(userMarker)
     }
@@ -64,7 +64,7 @@ export function OfficeMap({
         color: isSelected ? '#ef4444' : '#10b981',
         scale: isSelected ? 1.3 : 1
       })
-        .setLngLat([office.coordinates.lng, office.coordinates.lat])
+        .setLngLat([office.coordinates?.lng || 0, office.coordinates?.lat || 0])
         .setPopup(
           new mapboxgl.Popup().setHTML(`
             <div class="p-3 max-w-xs">
@@ -77,7 +77,7 @@ export function OfficeMap({
             </div>
           `)
         )
-        .addTo(map.current)
+        .addTo(map.current!)
 
       marker.getElement().addEventListener('click', () => {
         onOfficeSelect?.(office)
@@ -96,7 +96,9 @@ export function OfficeMap({
       }
       
       offices.forEach(office => {
-        bounds.extend([office.coordinates.lng, office.coordinates.lat])
+        if (office.coordinates) {
+          bounds.extend([office.coordinates.lng, office.coordinates.lat])
+        }
       })
       
       map.current.fitBounds(bounds, { padding: 50 })
@@ -111,7 +113,7 @@ export function OfficeMap({
 
     // Dynamically import mapbox-gl to avoid SSR issues
     import('mapbox-gl').then((mapboxgl) => {
-      ;(mapboxgl as any).accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!
+      ;(mapboxgl as typeof mapboxgl & { accessToken: string }).accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!
 
       map.current = new mapboxgl.Map({
         container: mapContainer.current!,

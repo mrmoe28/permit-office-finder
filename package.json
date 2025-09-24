@@ -1,0 +1,28 @@
+{
+  "name": "permit-office-finder",
+  "version": "1.0.0",
+  "description": "A comprehensive web application for finding building permit offices",
+  "scripts": {
+    "dev": "./start-dev.sh",
+    "start": "./start-dev.sh",
+    "install-all": "cd frontend && npm install && cd ../backend && npm install",
+    "build": "cd frontend && npm run build && cd ../backend && npm run build",
+    "clean": "rm -rf frontend/node_modules backend/node_modules frontend/.next backend/dist"
+  },
+  "keywords": [
+    "permit",
+    "office",
+    "finder",
+    "contractor",
+    "building",
+    "nextjs",
+    "react",
+    "typescript"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}
