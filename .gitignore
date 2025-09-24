@@ -25,10 +25,22 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# Local env files
+# Environment variables and secrets
 .env
-.env*.local
+.env.local
+.env.development
+.env.production
+.env.*.local
+.env.*.development
+.env.*.production
 !.env.example
+
+# API keys and secrets
+*.key
+*.pem
+secrets/
+credentials/
+config/secrets.json
 
 # Vercel
 .vercel
