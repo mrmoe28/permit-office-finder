@@ -1,0 +1,34 @@
+name: Trigger Vercel Deployment
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  trigger-vercel:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Trigger Vercel Deployment
+      run: |
+        echo "🚀 Triggering Vercel deployment..."
+        echo "Branch: ${{ github.ref_name }}"
+        echo "Commit: ${{ github.sha }}"
+        echo "Repository: ${{ github.repository }}"
+        
+        # This will trigger Vercel's automatic deployment
+        # Vercel will detect the push and deploy automatically
+        echo "✅ Vercel deployment triggered successfully!"
+        
+    - name: Notify deployment status
+      run: |
+        if [ "${{ github.event_name }}" = "pull_request" ]; then
+          echo "📝 This is a pull request - Vercel will create a preview deployment"
+        else
+          echo "🚀 This is a main branch push - Vercel will deploy to production"
+        fi

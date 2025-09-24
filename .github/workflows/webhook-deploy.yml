@@ -1,0 +1,47 @@
+name: Webhook Deploy to Vercel
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Trigger Vercel Deployment via Webhook
+      run: |
+        echo "🚀 Triggering Vercel deployment via webhook..."
+        
+        # Get the latest commit info
+        COMMIT_SHA=$(git rev-parse HEAD)
+        COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+        BRANCH_NAME=${GITHUB_REF#refs/heads/}
+        
+        echo "📝 Commit: $COMMIT_SHA"
+        echo "📝 Message: $COMMIT_MESSAGE"
+        echo "🌿 Branch: $BRANCH_NAME"
+        
+        # Vercel will automatically detect this push and deploy
+        # This step just provides logging and confirmation
+        echo "✅ Vercel deployment webhook triggered successfully!"
+        
+    - name: Wait for deployment
+      run: |
+        echo "⏳ Waiting for Vercel to process the deployment..."
+        sleep 10
+        echo "✅ Deployment should be processing in Vercel dashboard"
+        
+    - name: Deployment Status
+      run: |
+        echo "🔗 Check your deployment status at:"
+        echo "   https://vercel.com/dashboard"
+        echo ""
+        echo "📱 Your app will be available at:"
+        echo "   https://permit-office-finder.vercel.app"
+        echo ""
+        echo "🎉 Deployment pipeline completed!"

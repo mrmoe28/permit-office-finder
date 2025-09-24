@@ -16,6 +16,11 @@ A comprehensive web application that helps contractors and property owners find 
 - Solar installation specific guidelines
 - Real-time updates and notifications
 
+**🚀 Live Deployment:**
+- **Production**: [https://permit-office-finder.vercel.app](https://permit-office-finder.vercel.app)
+- **Automatic Deployments**: Every push to `main` branch triggers Vercel deployment
+- **Preview Deployments**: Every PR gets a preview deployment URL
+
 **Target Users:**
 - Solar installers and contractors
 - Property owners and developers
