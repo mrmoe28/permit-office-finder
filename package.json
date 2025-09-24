@@ -7,7 +7,11 @@
     "start": "./start-dev.sh",
     "install-all": "cd frontend && npm install && cd ../backend && npm install",
     "build": "cd frontend && npm run build && cd ../backend && npm run build",
-    "clean": "rm -rf frontend/node_modules backend/node_modules frontend/.next backend/dist"
+    "clean": "rm -rf frontend/node_modules backend/node_modules frontend/.next backend/dist",
+    "test-deployment": "./scripts/test-deployment.sh",
+    "check-deployment": "./scripts/check-deployment.sh",
+    "deploy": "cd frontend && vercel --prod",
+    "deploy-preview": "cd frontend && vercel"
   },
   "keywords": [
     "permit",
