@@ -1,5 +1,5 @@
-import { Router } from 'express';
-import { AuthService } from '../services/authService';
+import { Router, Request, Response } from 'express';
+import { authenticate, optionalAuth } from '../middleware/auth';
 
 const router = Router();
 
@@ -7,26 +7,16 @@ const router = Router();
  * GET /api/auth/me
  * Get current user information
  */
-router.get('/me', async (req, res) => {
+router.get('/me', authenticate, async (req: Request, res: Response) => {
   try {
-    const userId = await AuthService.getCurrentUser();
-    
-    if (!userId) {
-      return res.status(401).json({ 
-        error: 'Unauthorized',
-        message: 'User not authenticated'
-      });
-    }
-
-    const userInfo = await AuthService.getUserInfo(userId);
-    
-    res.json({
+    // User data is attached by authenticate middleware
+    return res.json({
       success: true,
-      user: userInfo
+      user: req.user
     });
   } catch (error) {
     console.error('Auth error:', error);
-    res.status(500).json({ 
+    return res.status(500).json({
       error: 'Internal server error',
       message: 'Failed to get user information'
     });
@@ -37,17 +27,15 @@ router.get('/me', async (req, res) => {
  * GET /api/auth/check
  * Check if user is authenticated
  */
-router.get('/check', async (req, res) => {
+router.get('/check', optionalAuth, async (req: Request, res: Response) => {
   try {
-    const isAuthenticated = await AuthService.isAuthenticated();
-    
-    res.json({
+    return res.json({
       success: true,
-      authenticated: isAuthenticated
+      authenticated: !!req.user
     });
   } catch (error) {
     console.error('Auth check error:', error);
-    res.status(500).json({ 
+    return res.status(500).json({
       error: 'Internal server error',
       message: 'Failed to check authentication'
     });

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { ClerkExpressRequireAuth, RequireAuthProp } from '@clerk/express';
+import { requireAuth as clerkRequireAuth, getAuth } from '@clerk/express';
+import { createClerkClient } from '@clerk/backend';
 import { PrismaClient } from '../generated/prisma';
 
 const prisma = new PrismaClient();
@@ -7,7 +8,7 @@ const prisma = new PrismaClient();
 // Define user type
 interface UserData {
   id: string;
-  clerkId: string;
+  clerkId: string | null;
   email: string;
   name?: string;
   phone?: string;
@@ -25,42 +26,39 @@ declare module 'express-serve-static-core' {
 }
 
 // Clerk authentication middleware
-export const requireAuth = ClerkExpressRequireAuth({
-  secretKey: process.env.CLERK_SECRET_KEY,
-});
+export const requireAuth = clerkRequireAuth();
 
 // Custom middleware to sync user data and attach to request
 export const syncUser = async (
-  req: RequireAuthProp<Request>,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const clerkUser = req.auth;
+    const auth = getAuth(req);
 
-    if (!clerkUser || !clerkUser.userId) {
+    if (!auth || !auth.userId) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
     // Find or create user in database
     let user = await prisma.user.findUnique({
-      where: { clerkId: clerkUser.userId }
+      where: { clerkId: auth.userId }
     });
 
     if (!user) {
       // Get user data from Clerk
-      const { createClerkClient } = await import('@clerk/backend');
       const clerkClient = createClerkClient({
         secretKey: process.env.CLERK_SECRET_KEY!
       });
 
       try {
-        const clerkUserData = await clerkClient.users.getUser(clerkUser.userId);
+        const clerkUserData = await clerkClient.users.getUser(auth.userId);
 
         // Create user in database
         user = await prisma.user.create({
           data: {
-            clerkId: clerkUser.userId,
+            clerkId: auth.userId,
             email: clerkUserData.emailAddresses[0]?.emailAddress || '',
             name: `${clerkUserData.firstName || ''} ${clerkUserData.lastName || ''}`.trim() || null,
             phone: clerkUserData.phoneNumbers[0]?.phoneNumber || null,
@@ -80,7 +78,7 @@ export const syncUser = async (
     next();
   } catch (error) {
     console.error('Error in syncUser middleware:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -102,13 +100,13 @@ export const optionalAuth = async (
     }
 
     // If auth header exists, run full authentication
-    requireAuth(req as RequireAuthProp<Request>, res, (error) => {
+    requireAuth(req, res, (error: any) => {
       if (error) {
         return next();
       }
 
       // If auth succeeded, sync user
-      syncUser(req as RequireAuthProp<Request>, res, next);
+      syncUser(req, res, next);
     });
   } catch {
     // If optional auth fails, just continue without auth

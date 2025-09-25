@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { verifyWebhook } from '@clerk/backend';
+import { Webhook } from 'svix';
 import { PrismaClient } from '../generated/prisma';
 
 const router = Router();
@@ -51,9 +51,10 @@ const verifyClerkWebhook = async (req: Request, res: Response, next: () => void)
     const payload = JSON.stringify(req.body);
 
     try {
-      const webhook = verifyWebhook(payload, headers, webhookSecret);
-      req.body = webhook;
-      next();
+      const webhook = new Webhook(webhookSecret);
+      const verifiedPayload = webhook.verify(payload, headers) as ClerkWebhookEvent;
+      req.body = verifiedPayload;
+      return next();
     } catch (error) {
       console.error('Webhook verification failed:', error);
       return res.status(400).json({ error: 'Invalid webhook signature' });
@@ -122,7 +123,7 @@ router.post('/clerk/users', verifyClerkWebhook, async (req: Request, res: Respon
 });
 
 // Health check for webhooks
-router.get('/health', (req: Request, res: Response) => {
+router.get('/health', (_req: Request, res: Response) => {
   res.status(200).json({
     status: 'ok',
     service: 'webhooks',
