@@ -11,8 +11,9 @@ export function Analytics({ measurementId = process.env.NEXT_PUBLIC_GA_MEASUREME
   useEffect(() => {
     if (measurementId && !measurementId.includes('PLACEHOLDER')) {
       // Initialize GA
-      if (typeof window !== 'undefined' && (window as Window & { gtag?: (...args: unknown[]) => void }).gtag) {
-        (window as Window & { gtag: (...args: unknown[]) => void }).gtag('config', measurementId, {
+      const windowWithGtag = window as Window & { gtag?: (...args: unknown[]) => void };
+      if (typeof window !== 'undefined' && windowWithGtag.gtag) {
+        windowWithGtag.gtag('config', measurementId, {
           page_title: document.title,
           page_location: window.location.href,
         })
@@ -52,7 +53,8 @@ export function Analytics({ measurementId = process.env.NEXT_PUBLIC_GA_MEASUREME
 
 // Helper function to track events
 export const trackEvent = (eventName: string, parameters?: Record<string, unknown>) => {
-  if (typeof window !== 'undefined' && (window as Window & { gtag?: (...args: unknown[]) => void }).gtag) {
-    (window as Window & { gtag: (...args: unknown[]) => void }).gtag('event', eventName, parameters)
+  const windowWithGtag = window as Window & { gtag?: (...args: unknown[]) => void };
+  if (typeof window !== 'undefined' && windowWithGtag.gtag) {
+    windowWithGtag.gtag('event', eventName, parameters)
   }
 }
